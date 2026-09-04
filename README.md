@@ -1,6 +1,20 @@
 # Toolshed CLI
 
-Toolshed adalah CLI open source untuk developer sehari-hari — berisi kumpulan perintah cepat seputar **git** dan **manajemen file lokal**, dibangun dengan Python + [Click](https://click.palletsprojects.com/).
+**Toolshed** adalah CLI open source yang mempercepat pekerjaan berulang seorang developer — hal-hal kecil yang biasanya diketik manual setiap hari, sekarang jadi satu perintah pendek.
+
+Dibagi 2 kelompok:
+- **`toolshed git ...`** — ringkas status repo, commit + push sekaligus, bersihkan branch yang sudah merged, batalkan commit terakhir, lihat daftar stash.
+- **`toolshed files ...`** — cari file terbesar, bersihkan junk (`__pycache__`, `node_modules`, dll), cari & hapus file duplikat berdasarkan isi, rename banyak file sekaligus pakai pola, dan lihat struktur folder.
+
+Contoh cepat:
+
+```bash
+toolshed git quick-commit "fix bug login" --push   # add + commit + push, satu baris
+toolshed files clean-junk . --apply                # bersihkan sampah __pycache__, node_modules, dll
+toolshed files dedupe .                             # cari file kembar berdasarkan isi, bukan cuma nama
+```
+
+Dibangun dengan Python + [Click](https://click.palletsprojects.com/).
 
 ## Instalasi
 
