@@ -88,3 +88,56 @@ def clean_branches(dry_run: bool, apply_: bool):
         console.print(f"[green]{len(candidates)} branch dihapus.[/green]")
     else:
         console.print("\n[yellow]Dry-run.[/yellow] Jalankan dengan --apply untuk benar-benar menghapus.")
+
+
+@git.command("undo")
+@click.option(
+    "--hard",
+    is_flag=True,
+    help="Buang juga perubahan di working directory (default: perubahan tetap dipertahankan, staged).",
+)
+def undo(hard: bool):
+    """Batalkan commit terakhir. Secara default perubahan tetap ada (unstaged/staged), tidak hilang."""
+    last_commit = _run(["git", "log", "-1", "--pretty=format:%h %s"])
+    if not last_commit:
+        console.print("Tidak ada commit untuk dibatalkan.")
+        return
+
+    mode = "--hard" if hard else "--soft"
+    _run(["git", "reset", mode, "HEAD~1"])
+
+    if hard:
+        console.print(f"[green]Commit dibatalkan (hard):[/green] {last_commit}")
+        console.print("[yellow]Perubahan di commit itu ikut terhapus dari working directory.[/yellow]")
+    else:
+        console.print(f"[green]Commit dibatalkan:[/green] {last_commit}")
+        console.print("Perubahan tetap ada dan sudah staged, siap di-commit ulang kalau perlu.")
+
+
+@git.command("stash-list")
+def stash_list():
+    """Tampilkan semua git stash dalam bentuk tabel ringkas."""
+    raw = _run(["git", "stash", "list"])
+    if not raw:
+        console.print("Tidak ada stash tersimpan.")
+        return
+
+    table = Table(title="Daftar stash")
+    table.add_column("Index", justify="right")
+    table.add_column("Branch")
+    table.add_column("Pesan")
+
+    for line in raw.splitlines():
+        # Format asli: stash@{0}: On branch-name: pesan
+        idx, _, rest = line.partition(":")
+        rest = rest.strip()
+        if rest.lower().startswith("on ") or rest.lower().startswith("wip on "):
+            branch_part, _, msg = rest.partition(":")
+            branch = branch_part.split(" ", 1)[-1].strip()
+            msg = msg.strip()
+        else:
+            branch = "-"
+            msg = rest
+        table.add_row(idx.strip(), branch, msg or "-")
+
+    console.print(table)

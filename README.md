@@ -22,16 +22,26 @@ toolshed git quick-commit "pesan"    # add semua perubahan + commit
 toolshed git quick-commit "pesan" --push
 toolshed git clean-branches          # preview branch lokal yang sudah merged
 toolshed git clean-branches --apply  # hapus beneran
+toolshed git undo                    # batalkan commit terakhir, perubahan tetap ada (staged)
+toolshed git undo --hard             # batalkan commit terakhir SEKALIGUS buang perubahannya
+toolshed git stash-list              # tampilkan semua stash dalam tabel ringkas
 ```
 
 ### File manager
 
 ```bash
-toolshed files largest .             # 10 file terbesar di direktori saat ini
+toolshed files largest .                 # 10 file terbesar di direktori saat ini
 toolshed files largest . -n 20
-toolshed files clean-junk .          # preview __pycache__, node_modules, dll
-toolshed files clean-junk . --apply  # hapus beneran
-toolshed files tree . --depth 3      # struktur direktori
+toolshed files clean-junk .              # preview __pycache__, node_modules, dll
+toolshed files clean-junk . --apply      # hapus beneran
+toolshed files tree . --depth 3          # struktur direktori
+toolshed files dedupe .                  # preview file duplikat berdasarkan isi (hash)
+toolshed files dedupe . --apply          # hapus duplikat, 1 salinan tetap disimpan per grup
+
+# rename banyak file sekaligus pakai regex
+toolshed files rename-bulk . --match "IMG_(\d+)\.jpg" --to "photo_\1.jpg"
+toolshed files rename-bulk . --match "IMG_(\d+)\.jpg" --to "photo_\1.jpg" --apply
+toolshed files rename-bulk . --match "IMG_(\d+)\.jpg" --to "photo_\1.jpg" --apply --recursive
 ```
 
 ## Development
